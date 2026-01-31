@@ -648,6 +648,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 3084910092609015895, guid: 88097b566ad1fdd489d7ee77465b57aa, type: 3}
+      propertyPath: maskSwitchSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 3b381466744b889419ef1aed7657023d, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
