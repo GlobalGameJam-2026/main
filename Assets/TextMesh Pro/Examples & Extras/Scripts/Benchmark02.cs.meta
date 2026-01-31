@@ -1,10 +1,9 @@
 fileFormatVersion: 2
-guid: 7aa298a9fc3420d43a54171011880eb3
+guid: e8538afcddc14efbb5d9e94b7ae50197
 MonoImporter:
-  externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - maskSwitchSound: {fileID: 8300000, guid: 0013fba94a153054cacc1764b9d121c0, type: 3}
+  - TheFont: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
