@@ -92,11 +92,11 @@ namespace ThawTheMask
 
         private void Update()
         {
-            // Optional: Press any key to start
-            if (Input.anyKeyDown && buttonCanvasGroup != null && buttonCanvasGroup.alpha >= 1f)
-            {
-                OnStartButtonClicked();
-            }
+            // Optional: Press Space or Enter to start (disabled to prevent interference with button clicks)
+            // if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)) && buttonCanvasGroup != null && buttonCanvasGroup.alpha >= 1f)
+            // {
+            //     OnStartButtonClicked();
+            // }
         }
     }
 }

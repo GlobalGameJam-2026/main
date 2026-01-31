@@ -97,5 +97,58 @@ namespace ThawTheMask
             Debug.Log("Stage 2 saved to Assets/Resources/Levels/Stage2.asset");
 #endif
         }
+
+        [ContextMenu("Create Stage 3 Data")]
+        public void CreateStage3()
+        {
+            LevelData level = ScriptableObject.CreateInstance<LevelData>();
+            level.levelName = "Stage 3";
+            level.stageNumber = 3;
+            level.playerSpawnPosition = new Vector2(-15f, 0f);
+            level.goalPosition = new Vector2(22f, 5.5f);
+
+            // EXPERT level - longest and hardest stage
+            
+            // Starting area
+            level.AddPlatform(-15f, -1f, 3f, 0.5f, MaskVisibility.Both);
+            
+            // HUGE GAP! WHITE mask (5 unit gap)
+            level.AddPlatform(-10f, 0f, 1.5f, 0.5f, MaskVisibility.WhiteOnly);
+            
+            // HUGE GAP! BLACK mask (4.5 unit gap)
+            level.AddPlatform(-6f, 1f, 1f, 0.5f, MaskVisibility.BlackOnly);
+            
+            // Tiny! WHITE mask (4 unit gap)
+            level.AddPlatform(-2.5f, 2f, 0.8f, 0.5f, MaskVisibility.WhiteOnly);
+            
+            // Tiny! BLACK mask (4 unit gap)
+            level.AddPlatform(1f, 2.5f, 0.8f, 0.5f, MaskVisibility.BlackOnly);
+            
+            // Medium platform - WHITE mask (3.5 unit gap)
+            level.AddPlatform(4.5f, 3f, 1.5f, 0.5f, MaskVisibility.WhiteOnly);
+            
+            // Tiny! BLACK mask (4 unit gap)
+            level.AddPlatform(8f, 3.5f, 0.8f, 0.5f, MaskVisibility.BlackOnly);
+            
+            // Tiny! WHITE mask (3.5 unit gap)
+            level.AddPlatform(11f, 4f, 0.8f, 0.5f, MaskVisibility.WhiteOnly);
+            
+            // Medium - BLACK mask (4 unit gap)
+            level.AddPlatform(14.5f, 4.5f, 1.5f, 0.5f, MaskVisibility.BlackOnly);
+            
+            // Final jump! WHITE mask (4 unit gap)
+            level.AddPlatform(18f, 5f, 1.5f, 0.5f, MaskVisibility.WhiteOnly);
+            
+            // Goal platform (always visible)
+            level.AddPlatform(22f, 5f, 2f, 0.5f, MaskVisibility.Both);
+
+            Debug.Log("Stage 3 data created! (EXPERT level - longest and hardest)");
+            
+#if UNITY_EDITOR
+            UnityEditor.AssetDatabase.CreateAsset(level, "Assets/Resources/Levels/Stage3.asset");
+            UnityEditor.AssetDatabase.SaveAssets();
+            Debug.Log("Stage 3 saved to Assets/Resources/Levels/Stage3.asset");
+#endif
+        }
     }
 }

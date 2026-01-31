@@ -83,6 +83,10 @@ namespace ThawTheMask
             {
                 ProgressManager.Instance.CompleteStage(2);
             }
+            else if (sceneName.Contains("Stage3") || sceneName.Contains("stage3"))
+            {
+                ProgressManager.Instance.CompleteStage(3);
+            }
             // Add more stages as needed
         }
 
@@ -107,8 +111,12 @@ namespace ThawTheMask
                 }
                 else if (currentScene.Contains("Stage2") || currentScene.Contains("stage2"))
                 {
+                    nextSceneName = "Stage3";
+                }
+                else if (currentScene.Contains("Stage3") || currentScene.Contains("stage3"))
+                {
                     Debug.Log("🎊 Game Complete! No more stages.");
-                    return;
+                    nextSceneName = "StageSelect"; // Go back to stage select after final stage
                 }
             }
 

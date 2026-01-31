@@ -17,12 +17,19 @@ namespace ThawTheMask
         [Header("UI Elements")]
         [SerializeField] private Button button;
         [SerializeField] private TextMeshProUGUI stageText;
+        [SerializeField] private UnityEngine.UI.Image stageImage;
         [SerializeField] private GameObject lockedIcon;
         [SerializeField] private GameObject completedIcon;
+
+        [Header("Stage Images")]
+        [SerializeField] private Sprite lockedSprite;
+        [SerializeField] private Sprite unlockedSprite;
+        [SerializeField] private Sprite completedSprite;
 
         [Header("Colors")]
         [SerializeField] private Color unlockedColor = Color.white;
         [SerializeField] private Color lockedColor = Color.gray;
+        [SerializeField] private Color textColor = Color.black;
 
         private void Start()
         {
@@ -40,11 +47,28 @@ namespace ThawTheMask
             // Update button interactability
             button.interactable = isUnlocked;
 
-            // Update text
+            // Update text (always black)
             if (stageText != null)
             {
                 stageText.text = $"Stage {stageNumber}";
-                stageText.color = isUnlocked ? unlockedColor : lockedColor;
+                stageText.color = textColor;
+            }
+
+            // Update stage image based on state
+            if (stageImage != null)
+            {
+                if (isCompleted && completedSprite != null)
+                {
+                    stageImage.sprite = completedSprite;
+                }
+                else if (isUnlocked && unlockedSprite != null)
+                {
+                    stageImage.sprite = unlockedSprite;
+                }
+                else if (lockedSprite != null)
+                {
+                    stageImage.sprite = lockedSprite;
+                }
             }
 
             // Update icons
@@ -63,6 +87,13 @@ namespace ThawTheMask
             colors.normalColor = isUnlocked ? unlockedColor : lockedColor;
             colors.disabledColor = lockedColor;
             button.colors = colors;
+
+            // Update button image color
+            UnityEngine.UI.Image buttonImage = button.GetComponent<UnityEngine.UI.Image>();
+            if (buttonImage != null)
+            {
+                buttonImage.color = isUnlocked ? unlockedColor : lockedColor;
+            }
         }
 
         private void OnButtonClicked()
