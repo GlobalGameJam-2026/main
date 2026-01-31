@@ -45,6 +45,9 @@ namespace ThawTheMask
         {
             Debug.Log("🎉 Goal Reached! Level Complete!");
 
+            // Save progress
+            SaveProgress();
+
             // Play particles
             if (completionParticles != null)
             {
@@ -65,6 +68,22 @@ namespace ThawTheMask
             {
                 Invoke(nameof(LoadNextLevel), delayBeforeNextLevel);
             }
+        }
+
+        private void SaveProgress()
+        {
+            // Get current stage number from scene name
+            string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            
+            if (sceneName.Contains("Stage1") || sceneName.Contains("stage1"))
+            {
+                ProgressManager.Instance.CompleteStage(1);
+            }
+            else if (sceneName.Contains("Stage2") || sceneName.Contains("stage2"))
+            {
+                ProgressManager.Instance.CompleteStage(2);
+            }
+            // Add more stages as needed
         }
 
         private void ShowCompletionUI()

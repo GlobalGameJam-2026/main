@@ -14,6 +14,7 @@ namespace ThawTheMask
         [SerializeField] private CanvasGroup backgroundCanvasGroup;
         [SerializeField] private CanvasGroup logoCanvasGroup;
         [SerializeField] private CanvasGroup buttonCanvasGroup;
+        [SerializeField] private CanvasGroup quitButtonCanvasGroup;
         [SerializeField] private Button startButton;
 
         [Header("Animation Settings")]
@@ -24,7 +25,7 @@ namespace ThawTheMask
         [SerializeField] private float buttonFadeDuration = 1f;
 
         [Header("Scene Settings")]
-        [SerializeField] private string firstLevelSceneName = "Stage1";
+        [SerializeField] private string firstLevelSceneName = "StageSelect";
 
         private void Start()
         {
@@ -32,6 +33,7 @@ namespace ThawTheMask
             if (backgroundCanvasGroup != null) backgroundCanvasGroup.alpha = 0;
             if (logoCanvasGroup != null) logoCanvasGroup.alpha = 0;
             if (buttonCanvasGroup != null) buttonCanvasGroup.alpha = 0;
+            if (quitButtonCanvasGroup != null) quitButtonCanvasGroup.alpha = 0;
 
             // Setup button
             if (startButton != null)
@@ -58,11 +60,15 @@ namespace ThawTheMask
                 yield return StartCoroutine(FadeIn(logoCanvasGroup, logoFadeDuration));
             }
 
-            // Wait a bit, then fade in button
+            // Wait a bit, then fade in buttons (start and quit together)
             yield return new WaitForSeconds(buttonFadeDelay);
             if (buttonCanvasGroup != null)
             {
-                yield return StartCoroutine(FadeIn(buttonCanvasGroup, buttonFadeDuration));
+                StartCoroutine(FadeIn(buttonCanvasGroup, buttonFadeDuration));
+            }
+            if (quitButtonCanvasGroup != null)
+            {
+                StartCoroutine(FadeIn(quitButtonCanvasGroup, buttonFadeDuration));
             }
         }
 
