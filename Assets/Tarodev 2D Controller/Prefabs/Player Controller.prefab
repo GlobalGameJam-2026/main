@@ -128,6 +128,9 @@ MonoBehaviour:
   maskToggleKey: 304
   maskSwitchSound: {fileID: 0}
   switchCooldown: 0.1
+  animator: {fileID: 0}
+  black: {fileID: 0}
+  white: {fileID: 0}
 --- !u!1 &2969068311587289281
 GameObject:
   m_ObjectHideFlags: 0
@@ -29706,7 +29709,7 @@ Animator:
   m_GameObject: {fileID: 2969068313154050964}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 6e5b5f4662f713845b0c28185c4ea62c, type: 2}
+  m_Controller: {fileID: 9100000, guid: a68182089674c3e4eab33fc95d9e89c1, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
