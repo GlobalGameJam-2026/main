@@ -769,6 +769,12 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 2969068313154050967, guid: 88097b566ad1fdd489d7ee77465b57aa,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -1425562020874601935, guid: 8518c79ee0374e145932967feab908cf,
+        type: 3}
     - target: {fileID: 3084910092609015895, guid: 88097b566ad1fdd489d7ee77465b57aa,
         type: 3}
       propertyPath: black
