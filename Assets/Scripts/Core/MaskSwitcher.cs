@@ -19,6 +19,11 @@ namespace ThawTheMask
         [SerializeField] private float switchCooldown = 0.1f;
         private float lastSwitchTime;
 
+        [Header("animator")]
+        [SerializeField] private Animator animator;
+        [SerializeField] public RuntimeAnimatorController black;
+        [SerializeField] public RuntimeAnimatorController white;
+
         private void Start()
         {
             // Get or add AudioSource component
@@ -28,11 +33,24 @@ namespace ThawTheMask
                 audioSource = gameObject.AddComponent<AudioSource>();
                 audioSource.playOnAwake = false;
             }
+
+            animator = GetComponentInChildren<Animator>();
         }
 
         private void Update()
         {
             HandleMaskInput();
+            if (MaskManager.Instance != null)
+            {
+                if(MaskManager.Instance.CurrentMask==MaskType.White)
+                {
+                    animator.runtimeAnimatorController = white;
+                }
+                else
+                {
+                    animator.runtimeAnimatorController = black;
+                }
+            }
         }
 
         private void HandleMaskInput()

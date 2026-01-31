@@ -363,6 +363,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410016288}
   m_CullTransparentMesh: 1
+--- !u!95 &744120287 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 2969068313154050966, guid: 88097b566ad1fdd489d7ee77465b57aa, type: 3}
+  m_PrefabInstance: {fileID: 977706447}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &802171461
 GameObject:
   m_ObjectHideFlags: 0
@@ -816,6 +821,18 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 3084910092609015895, guid: 88097b566ad1fdd489d7ee77465b57aa, type: 3}
+      propertyPath: black
+      value: 
+      objectReference: {fileID: 9100000, guid: a68182089674c3e4eab33fc95d9e89c1, type: 2}
+    - target: {fileID: 3084910092609015895, guid: 88097b566ad1fdd489d7ee77465b57aa, type: 3}
+      propertyPath: white
+      value: 
+      objectReference: {fileID: 9100000, guid: 6e5b5f4662f713845b0c28185c4ea62c, type: 2}
+    - target: {fileID: 3084910092609015895, guid: 88097b566ad1fdd489d7ee77465b57aa, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 744120287}
     - target: {fileID: 3084910092609015895, guid: 88097b566ad1fdd489d7ee77465b57aa, type: 3}
       propertyPath: maskSwitchSound
       value: 

@@ -7,23 +7,26 @@ namespace TarodevController
     /// </summary>
     public class PlayerAnimator : MonoBehaviour
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private Animator _anim;
 
         [SerializeField] private SpriteRenderer _sprite;
 
-        [Header("Settings")] [SerializeField, Range(1f, 3f)]
+        [Header("Settings")]
+        [SerializeField, Range(1f, 3f)]
         private float _maxIdleSpeed = 2;
 
         [SerializeField] private float _maxTilt = 5;
         [SerializeField] private float _tiltSpeed = 20;
 
-        [Header("Particles")] [SerializeField] private ParticleSystem _jumpParticles;
+        [Header("Particles")][SerializeField] private ParticleSystem _jumpParticles;
         [SerializeField] private ParticleSystem _launchParticles;
         [SerializeField] private ParticleSystem _moveParticles;
         [SerializeField] private ParticleSystem _landParticles;
 
-        [Header("Audio Clips")] [SerializeField]
+        [Header("Audio Clips")]
+        [SerializeField]
         private AudioClip[] _footsteps;
 
         private AudioSource _source;
@@ -61,7 +64,7 @@ namespace TarodevController
 
             HandleSpriteFlip();
 
-            HandleIdleSpeed();
+            HandleMovement(); // 이름 변경됨 (기존 HandleIdleSpeed)
 
             HandleCharacterTilt();
         }
@@ -71,11 +74,20 @@ namespace TarodevController
             if (_player.FrameInput.x != 0) _sprite.flipX = _player.FrameInput.x < 0;
         }
 
-        private void HandleIdleSpeed()
+        // Run 상태와 Idle 속도 조절을 동시에 처리합니다.
+        private void HandleMovement()
         {
+            // 입력 강도 (0 ~ 1)
             var inputStrength = Mathf.Abs(_player.FrameInput.x);
+
+            // 1. 기존 로직 유지 (Idle 상태일 때의 꿈틀거림 속도 등)
             _anim.SetFloat(IdleSpeedKey, Mathf.Lerp(1, _maxIdleSpeed, inputStrength));
             _moveParticles.transform.localScale = Vector3.MoveTowards(_moveParticles.transform.localScale, Vector3.one * inputStrength, 2 * Time.deltaTime);
+
+            // 2. [추가된 부분] Run 상태 전환 (입력값이 조금이라도 있으면 True)
+            // 0.05f는 입력 데드존(Deadzone) 역할을 하여 미세한 떨림 방지
+            bool isRunning = inputStrength > 0.05f;
+            _anim.SetBool(IsRunningKey, isRunning);
         }
 
         private void HandleCharacterTilt()
@@ -101,7 +113,7 @@ namespace TarodevController
         private void OnGroundedChanged(bool grounded, float impact)
         {
             _grounded = grounded;
-            
+
             if (grounded)
             {
                 DetectGroundColor();
@@ -136,8 +148,12 @@ namespace TarodevController
             main.startColor = _currentGradient;
         }
 
+        // Animator Parameter Keys
         private static readonly int GroundedKey = Animator.StringToHash("Grounded");
         private static readonly int IdleSpeedKey = Animator.StringToHash("IdleSpeed");
         private static readonly int JumpKey = Animator.StringToHash("Jump");
+
+        // [추가된 부분] Run 파라미터 키
+        private static readonly int IsRunningKey = Animator.StringToHash("IsRunning");
     }
 }
