@@ -1862,7 +1862,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 680410889955682881, guid: 1847772da884c0f45aa2569c2b66d2e1, type: 3}
+  m_Sprite: {fileID: -8425141836431729757, guid: 8edd2fda38da9704e996ac278b3aa69f,
+    type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -5045,7 +5046,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09654d166f5a6944188978c292ab3207, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThawTheMask.StageBackgroundManager
-  backgroundImageName: bgW
   sortingLayerName: Background
   sortingOrder: -100
   backgroundZPosition: 10
