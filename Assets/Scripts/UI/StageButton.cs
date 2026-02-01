@@ -14,6 +14,9 @@ namespace ThawTheMask
         [SerializeField] private int stageNumber = 1;
         [SerializeField] private string sceneName = "Stage1";
 
+        // Public property to access stage number
+        public int StageNumber => stageNumber;
+
         [Header("UI Elements")]
         [SerializeField] private Button button;
         [SerializeField] private TextMeshProUGUI stageText;

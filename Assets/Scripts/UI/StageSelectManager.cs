@@ -31,10 +31,21 @@ namespace ThawTheMask
         {
             if (stageButtons != null)
             {
+                // Check if stages 1-3 are all completed to unlock Stage 4
+                bool allFirstThreeCompleted = ProgressManager.Instance.IsStageCompleted(1) &&
+                                              ProgressManager.Instance.IsStageCompleted(2) &&
+                                              ProgressManager.Instance.IsStageCompleted(3);
+
                 foreach (var button in stageButtons)
                 {
                     if (button != null)
                     {
+                        // Hide Stage 4 until stages 1-3 are completed
+                        if (button.StageNumber == 4)
+                        {
+                            button.gameObject.SetActive(allFirstThreeCompleted);
+                        }
+                        
                         button.RefreshState();
                     }
                 }
