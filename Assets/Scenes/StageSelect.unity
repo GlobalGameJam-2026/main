@@ -170,8 +170,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11926287c7b930c4c8dfa80a15bb087e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThawTheMask.StageButton
-  stageNumber: 2
-  sceneName: stage2
+  stageNumber: 4
+  sceneName: stage4
   button: {fileID: 197172002}
   stageText: {fileID: 0}
   stageImage: {fileID: 0}
@@ -598,8 +598,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11926287c7b930c4c8dfa80a15bb087e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThawTheMask.StageButton
-  stageNumber: 2
-  sceneName: stage2
+  stageNumber: 3
+  sceneName: stage3
   button: {fileID: 510422621}
   stageText: {fileID: 0}
   stageImage: {fileID: 0}

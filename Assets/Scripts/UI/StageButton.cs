@@ -37,6 +37,20 @@ namespace ThawTheMask
         private void Start()
         {
             if (button == null) button = GetComponent<Button>();
+
+            // Auto-assign Stage Image if missing (Use the button's own image)
+            if (stageImage == null)
+            {
+                stageImage = GetComponent<UnityEngine.UI.Image>();
+                if (stageImage == null)
+                {
+                    Debug.LogWarning($"[StageButton {stageNumber}] Could not find Image component automatically.");
+                }
+                else
+                {
+                    Debug.Log($"[StageButton {stageNumber}] Auto-assigned Image component.");
+                }
+            }
             
             UpdateButtonState();
             button.onClick.AddListener(OnButtonClicked);
@@ -46,6 +60,8 @@ namespace ThawTheMask
         {
             bool isUnlocked = ProgressManager.Instance.IsStageUnlocked(stageNumber);
             bool isCompleted = ProgressManager.Instance.IsStageCompleted(stageNumber);
+
+            Debug.Log($"[StageButton {stageNumber}] Unlocked: {isUnlocked}, Completed: {isCompleted}");
 
             // Update button interactability
             button.interactable = isUnlocked;
@@ -62,16 +78,23 @@ namespace ThawTheMask
             {
                 if (isCompleted && completedSprite != null)
                 {
+                    Debug.Log($"[StageButton {stageNumber}] Setting Completed Sprite");
                     stageImage.sprite = completedSprite;
                 }
                 else if (isUnlocked && unlockedSprite != null)
                 {
+                    Debug.Log($"[StageButton {stageNumber}] Setting Unlocked Sprite");
                     stageImage.sprite = unlockedSprite;
                 }
                 else if (lockedSprite != null)
                 {
+                    Debug.Log($"[StageButton {stageNumber}] Setting Locked Sprite");
                     stageImage.sprite = lockedSprite;
                 }
+            }
+            else
+            {
+                Debug.LogWarning($"[StageButton {stageNumber}] Stage Image reference is missing! Assign it inInspector.");
             }
 
             // Update icons

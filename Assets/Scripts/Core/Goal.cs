@@ -54,76 +54,98 @@ namespace ThawTheMask
                 completionParticles.Play();
             }
 
-            // Play sound
+            // Play sound (Instant feedback sound)
             if (audioSource != null && completionSound != null)
             {
                 audioSource.PlayOneShot(completionSound);
             }
 
-            // Show completion message
-            ShowCompletionUI();
+            // Determine next scene name
+            string targetNextScene = DetermineNextSceneName();
 
-            // Load next level if specified
+            // Trigger Clear Sequence
+            if (ClearSequenceManager.Instance != null)
+            {
+                ClearSequenceManager.Instance.PlayClearSequence(targetNextScene);
+            }
+            else
+            {
+                // Fallback if no manager exists
+                Debug.LogWarning("ClearSequenceManager not found! Loading next scene directly.");
+                if (!string.IsNullOrEmpty(targetNextScene))
+                {
+                    Invoke(nameof(LoadNextLevelFallback), delayBeforeNextLevel);
+                }
+            }
+        }
+
+        private string DetermineNextSceneName()
+        {
+            // Use manually assigned name if available
             if (!string.IsNullOrEmpty(nextSceneName))
             {
-                Invoke(nameof(LoadNextLevel), delayBeforeNextLevel);
+                return nextSceneName;
             }
+
+            // Auto-detect next stage if enabled
+            if (autoProgressToNextStage)
+            {
+                string currentScene = SceneManager.GetActiveScene().name;
+                
+                if (currentScene.Contains("Stage1") || currentScene.Contains("stage1"))
+                {
+                    return "Stage2";
+                }
+                else if (currentScene.Contains("Stage2") || currentScene.Contains("stage2"))
+                {
+                    return "Stage3";
+                }
+                else if (currentScene.Contains("Stage3") || currentScene.Contains("stage3"))
+                {
+                    return "Stage4";
+                }
+                else if (currentScene.Contains("Stage4") || currentScene.Contains("stage4"))
+                {
+                    Debug.Log("🎊 Game Complete!");
+                    return "StageSelect";
+                }
+            }
+
+            return "StageSelect"; // Default fallback
         }
 
         private void SaveProgress()
         {
-            // Get current stage number from scene name
-            string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            string sceneName = SceneManager.GetActiveScene().name;
+            Debug.Log($"[Goal] Saving progress for scene: {sceneName}");
             
-            if (sceneName.Contains("Stage1") || sceneName.Contains("stage1"))
+            // Normalize checking (case insensitive)
+            sceneName = sceneName.ToLower();
+
+            int stageCompleted = 0;
+            if (sceneName.Contains("stage1")) stageCompleted = 1;
+            else if (sceneName.Contains("stage2")) stageCompleted = 2;
+            else if (sceneName.Contains("stage3")) stageCompleted = 3;
+            else if (sceneName.Contains("stage4")) stageCompleted = 4;
+
+            if (stageCompleted > 0)
             {
-                ProgressManager.Instance.CompleteStage(1);
+                Debug.Log($"[Goal] Marking Stage {stageCompleted} as completed.");
+                ProgressManager.Instance.CompleteStage(stageCompleted);
             }
-            else if (sceneName.Contains("Stage2") || sceneName.Contains("stage2"))
+            else
             {
-                ProgressManager.Instance.CompleteStage(2);
+                Debug.LogWarning($"[Goal] Could not determine stage number from scene name: {sceneName}");
             }
-            else if (sceneName.Contains("Stage3") || sceneName.Contains("stage3"))
-            {
-                ProgressManager.Instance.CompleteStage(3);
-            }
-            // Add more stages as needed
         }
 
-        private void ShowCompletionUI()
+        // Fallback method used ONLY if ClearSequenceManager is missing
+        private void LoadNextLevelFallback()
         {
-            // Simple debug message for now
-            // TODO: Show proper UI panel
-            Debug.Log("Level Complete! Press R to restart or wait for next level...");
-        }
-
-        private void LoadNextLevel()
-        {
-            // Auto-detect next stage if enabled
-            if (autoProgressToNextStage && string.IsNullOrEmpty(nextSceneName))
+            string targetTextScene = DetermineNextSceneName();
+            if (!string.IsNullOrEmpty(targetTextScene))
             {
-                string currentScene = SceneManager.GetActiveScene().name;
-                
-                // Simple stage progression
-                if (currentScene.Contains("Stage1") || currentScene.Contains("stage1"))
-                {
-                    nextSceneName = "Stage2";
-                }
-                else if (currentScene.Contains("Stage2") || currentScene.Contains("stage2"))
-                {
-                    nextSceneName = "Stage3";
-                }
-                else if (currentScene.Contains("Stage3") || currentScene.Contains("stage3"))
-                {
-                    Debug.Log("🎊 Game Complete! No more stages.");
-                    nextSceneName = "StageSelect"; // Go back to stage select after final stage
-                }
-            }
-
-            if (!string.IsNullOrEmpty(nextSceneName))
-            {
-                Debug.Log($"Loading next stage: {nextSceneName}");
-                SceneManager.LoadScene(nextSceneName);
+                SceneManager.LoadScene(targetTextScene);
             }
         }
 
