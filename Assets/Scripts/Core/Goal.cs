@@ -63,8 +63,19 @@ namespace ThawTheMask
             // Determine next scene name
             string targetNextScene = DetermineNextSceneName();
 
-            // Trigger Clear Sequence
-            if (ClearSequenceManager.Instance != null)
+            // Seamless transition for Stage 4 sub-stages (excluding 4-4)
+            string currentScene = SceneManager.GetActiveScene().name;
+            bool isSeamlessStage = currentScene.Equals("Stage4") || 
+                                   currentScene.Equals("Stage4-2") || 
+                                   currentScene.Equals("Stage4-3");
+
+            if (isSeamlessStage)
+            {
+                 // Skip Clear Sequence (Image/Fade) and load directly
+                 Debug.Log($"[Goal] Seamless transition to {targetNextScene}");
+                 SceneManager.LoadScene(targetNextScene);
+            }
+            else if (ClearSequenceManager.Instance != null)
             {
                 ClearSequenceManager.Instance.PlayClearSequence(targetNextScene);
             }
@@ -81,6 +92,25 @@ namespace ThawTheMask
 
         private string DetermineNextSceneName()
         {
+            string currentScene = SceneManager.GetActiveScene().name;
+
+            // SPECIAL HANDLING: Stage 4 variants
+            if (currentScene.Equals("Stage4") || currentScene.Equals("stage4"))
+                return "Stage4-2";
+            if (currentScene.Equals("Stage4-2") || currentScene.Equals("stage4-2"))
+                return "Stage4-3";
+            if (currentScene.Equals("Stage4-3") || currentScene.Equals("stage4-3"))
+                return "Stage4-4";
+            if (currentScene.Equals("Stage4-4") || currentScene.Equals("stage4-4"))
+            {
+                return "Stage5";
+            }
+            if (currentScene.Equals("Stage5") || currentScene.Equals("stage5"))
+            {
+                Debug.Log("🎊 Game Complete!");
+                return "StageSelect";
+            }
+
             // Use manually assigned name if available
             if (!string.IsNullOrEmpty(nextSceneName))
             {
@@ -90,23 +120,11 @@ namespace ThawTheMask
             // Auto-detect next stage if enabled
             if (autoProgressToNextStage)
             {
-                string currentScene = SceneManager.GetActiveScene().name;
-                
-                if (currentScene.Contains("Stage1") || currentScene.Contains("stage1"))
+                // Stages 1, 2, 3 return to Stage Select upon completion
+                if (currentScene.Equals("Stage1") || currentScene.Equals("stage1") ||
+                    currentScene.Equals("Stage2") || currentScene.Equals("stage2") ||
+                    currentScene.Equals("Stage3") || currentScene.Equals("stage3"))
                 {
-                    return "Stage2";
-                }
-                else if (currentScene.Contains("Stage2") || currentScene.Contains("stage2"))
-                {
-                    return "Stage3";
-                }
-                else if (currentScene.Contains("Stage3") || currentScene.Contains("stage3"))
-                {
-                    return "Stage4";
-                }
-                else if (currentScene.Contains("Stage4") || currentScene.Contains("stage4"))
-                {
-                    Debug.Log("🎊 Game Complete!");
                     return "StageSelect";
                 }
             }
@@ -127,6 +145,7 @@ namespace ThawTheMask
             else if (sceneName.Contains("stage2")) stageCompleted = 2;
             else if (sceneName.Contains("stage3")) stageCompleted = 3;
             else if (sceneName.Contains("stage4")) stageCompleted = 4;
+            else if (sceneName.Contains("stage5")) stageCompleted = 5;
 
             if (stageCompleted > 0)
             {
