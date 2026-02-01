@@ -27,6 +27,12 @@ namespace ThawTheMask
             RefreshAllButtons();
         }
 
+        private void OnEnable()
+        {
+            // Ensure buttons are refreshed every time the scene is enabled/loaded
+            RefreshAllButtons();
+        }
+
         private void RefreshAllButtons()
         {
             if (stageButtons != null)
@@ -55,6 +61,17 @@ namespace ThawTheMask
         private void OnBackButtonClicked()
         {
             SceneManager.LoadScene(titleSceneName);
+        }
+
+        private void Update()
+        {
+            // Debug: Press F5 to reset all progress
+            if (Input.GetKeyDown(KeyCode.F5))
+            {
+                Debug.Log("🔄 [Debug] F5 Pressed: Resetting all progress...");
+                ProgressManager.Instance.ResetProgress();
+                RefreshAllButtons();
+            }
         }
 
         // Debug method to reset progress
