@@ -1114,7 +1114,6 @@ GameObject:
   - component: {fileID: 827700513}
   - component: {fileID: 827700512}
   - component: {fileID: 827700511}
-  - component: {fileID: 827700510}
   m_Layer: 5
   m_Name: UI_Canvas
   m_TagString: Untagged
@@ -1122,25 +1121,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &827700510
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 827700509}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9231f609eb53a85439af1d544500d45a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ThawTheMask.ClearSequenceManager
-  fadePanel: {fileID: 1950157729}
-  clearImage: {fileID: 167247301}
-  clearBGM: {fileID: 0}
-  volume: 1
-  fadeInDuration: 1
-  displayDuration: 2
-  fadeOutDuration: 1
 --- !u!114 &827700511
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9498,7 +9478,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09654d166f5a6944188978c292ab3207, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThawTheMask.StageBackgroundManager
-  backgroundImageName: bgW
   sortingLayerName: Background
   sortingOrder: -100
   backgroundZPosition: 10
