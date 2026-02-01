@@ -536,6 +536,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 340921706}
   m_CullTransparentMesh: 1
+--- !u!1 &389664401
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 389664403}
+  - component: {fileID: 389664402}
+  m_Layer: 0
+  m_Name: BGM
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &389664402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389664401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6de1c239b304bc74bae03b978bf0a54d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StageMusicController
+  stageBGM: {fileID: 8300000, guid: 215865352b421374099c3526f19ba6cb, type: 3}
+--- !u!4 &389664403
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389664401}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.98617, y: 1.74479, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &439309910
 GameObject:
   m_ObjectHideFlags: 0
@@ -9894,6 +9939,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Goal
       objectReference: {fileID: 0}
+    - target: {fileID: 2492295722158949703, guid: 9e295a3dff668464db80111ebec01743,
+        type: 3}
+      propertyPath: m_Radius
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7801632127966901280, guid: 9e295a3dff668464db80111ebec01743,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -9902,7 +9952,7 @@ PrefabInstance:
     - target: {fileID: 7801632127966901280, guid: 9e295a3dff668464db80111ebec01743,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.6
+      value: -0.72
       objectReference: {fileID: 0}
     - target: {fileID: 7801632127966901280, guid: 9e295a3dff668464db80111ebec01743,
         type: 3}
@@ -9944,7 +9994,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8510421245737682863, guid: 9e295a3dff668464db80111ebec01743,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -7341407202210888751, guid: 5ff54a87f30a05340a61af04e5773801,
+        type: 3}
+    - target: {fileID: 8510421245737682863, guid: 9e295a3dff668464db80111ebec01743,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8510421245737682863, guid: 9e295a3dff668464db80111ebec01743,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8510421245737682863, guid: 9e295a3dff668464db80111ebec01743,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 2558479525770695044, guid: 9e295a3dff668464db80111ebec01743, type: 3}
+    - {fileID: 1220560291933002401, guid: 9e295a3dff668464db80111ebec01743, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -9962,3 +10035,4 @@ SceneRoots:
   - {fileID: 67354617}
   - {fileID: 2123148054}
   - {fileID: 827700517}
+  - {fileID: 389664403}
