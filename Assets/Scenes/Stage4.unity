@@ -8558,7 +8558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09654d166f5a6944188978c292ab3207, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThawTheMask.StageBackgroundManager
-  backgroundImageName: Background
+  backgroundImageName: bgW
   sortingLayerName: Background
   sortingOrder: -100
   backgroundZPosition: 10

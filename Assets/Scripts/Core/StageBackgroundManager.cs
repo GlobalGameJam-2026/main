@@ -85,6 +85,20 @@ namespace ThawTheMask
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
+        private void Update()
+        {
+            if (MaskManager.Instance.CurrentMask == MaskType.White)
+            {
+                backgroundImageName = "bgW";
+            }
+            else
+            {
+                backgroundImageName = "bgB";
+            }
+
+            RefreshBackground();
+        }
+
         private void LateUpdate()
         {
             // Apply parallax effect if enabled
