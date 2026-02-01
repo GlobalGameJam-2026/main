@@ -3,56 +3,32 @@ using UnityEngine.SceneManagement;
 
 namespace ThawTheMask
 {
-    /// <summary>
-    /// Automatically creates and manages background sprites for all stages.
-    /// This script loads a background image from Resources and applies it to the current stage.
-    /// Avoids Git sync issues by creating backgrounds at runtime instead of in scene files.
-    /// </summary>
     public class StageBackgroundManager : MonoBehaviour
     {
         public static StageBackgroundManager Instance { get; private set; }
 
-        [Header("Background Settings")]
-        [Tooltip("배경 이미지 파일 이름 (Resources 폴더 내, 확장자 제외)")]
-        [SerializeField] private string backgroundImageName = "StageBackground";
+        // 현재 스테이지용 스프라이트 저장 변수
+        private Sprite currentWhiteSprite;
+        private Sprite currentBlackSprite;
 
         [Header("Display Settings")]
-        [Tooltip("배경 Sorting Layer 이름")]
         [SerializeField] private string sortingLayerName = "Background";
-        
-        [Tooltip("배경 Sorting Order (음수로 설정하여 뒤에 표시)")]
         [SerializeField] private int sortingOrder = -100;
-
-        [Tooltip("배경 Z 위치 (카메라보다 뒤에)")]
         [SerializeField] private float backgroundZPosition = 10f;
 
         [Header("Scale Settings")]
-        [Tooltip("화면에 맞춰 자동으로 스케일 조정")]
         [SerializeField] private bool autoScale = true;
-
-        [Tooltip("수동 스케일 (autoScale이 false일 때 사용)")]
         [SerializeField] private Vector3 manualScale = new Vector3(20f, 20f, 1f);
 
-
         [Header("Parallax Settings")]
-        [Tooltip("Parallax 효과 활성화 (배경이 카메라보다 천천히 움직임)")]
         [SerializeField] private bool enableParallax = true;
-
-        [Tooltip("Parallax 속도 (0 = 고정, 1 = 카메라와 같이 움직임, 0.5 = 절반 속도)")]
         [Range(0f, 1f)]
         [SerializeField] private float parallaxSpeed = 0.3f;
-
-        [Tooltip("배경 크기 배율 (Parallax 사용 시 배경을 더 크게)")]
         [SerializeField] private float parallaxSizeMultiplier = 2.5f;
 
         [Header("Background Size Settings")]
-        [Tooltip("세로 크기 추가 배율 (위아래로 더 늘림)")]
         [SerializeField] private float verticalScaleMultiplier = 1.5f;
-
-        [Tooltip("가로 타일링 활성화 (양옆에 이미지 반복)")]
         [SerializeField] private bool enableHorizontalTiling = true;
-
-        [Tooltip("양옆에 추가할 타일 개수 (1 = 좌우 각 1개씩)")]
         [SerializeField] private int horizontalTileCount = 1;
 
         private GameObject backgroundObject;
@@ -60,10 +36,10 @@ namespace ThawTheMask
         private Camera mainCamera;
         private Vector3 lastCameraPosition;
 
+        private MaskType? currentCachedMaskType = null;
 
         private void Awake()
         {
-            // Singleton pattern
             if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
@@ -72,233 +48,166 @@ namespace ThawTheMask
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            // Get main camera
-            mainCamera = Camera.main;
-
-            // Subscribe to scene loaded event
+            // 씬 로드 이벤트는 "스테이지가 아닌 씬"에 갔을 때 배경 지우는 용도로만 사용
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
         private void OnDestroy()
         {
-            // Unsubscribe from scene loaded event
             SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+
+        /// <summary>
+        /// [핵심] 외부(StageSettings)에서 호출하여 배경을 설정하고 갱신하는 함수
+        /// </summary>
+        public void SetStageSprites(Sprite white, Sprite black)
+        {
+            currentWhiteSprite = white;
+            currentBlackSprite = black;
+
+            // 카메라 갱신
+            mainCamera = Camera.main;
+            if (mainCamera == null) mainCamera = FindObjectOfType<Camera>();
+
+            // 마스크 상태 캐시 초기화 (강제 갱신 유도)
+            currentCachedMaskType = null;
+
+            Debug.Log($"[StageBackgroundManager] 배경 스프라이트 교체됨 -> 갱신 시작");
+
+            // 배경 즉시 생성
+            CreateBackground();
         }
 
         private void Update()
         {
-            if (MaskManager.Instance.CurrentMask == MaskType.White)
-            {
-                backgroundImageName = "bgW";
-            }
-            else
-            {
-                backgroundImageName = "bgB";
-            }
+            if (MaskManager.Instance == null) return;
 
-            RefreshBackground();
+            MaskType newMaskType = MaskManager.Instance.CurrentMask;
+
+            // 마스크 상태가 바뀌었거나, 배경 오브젝트가 사라졌으면 갱신
+            if (currentCachedMaskType != newMaskType || backgroundParent == null)
+            {
+                currentCachedMaskType = newMaskType;
+                CreateBackground();
+            }
         }
 
         private void LateUpdate()
         {
-            // Apply parallax effect if enabled
-            if (enableParallax && backgroundParent != null && mainCamera != null)
+            if (backgroundParent != null && mainCamera != null && enableParallax)
             {
                 UpdateParallaxPosition();
             }
         }
 
-        /// <summary>
-        /// Update background position with parallax effect
-        /// </summary>
         private void UpdateParallaxPosition()
         {
             Vector3 currentCameraPosition = mainCamera.transform.position;
-            
-            // Calculate camera movement delta
+
+            if (Vector3.Distance(currentCameraPosition, lastCameraPosition) > 50f)
+            {
+                AlignBackgroundToCamera();
+                lastCameraPosition = currentCameraPosition;
+                return;
+            }
+
             Vector3 deltaMovement = currentCameraPosition - lastCameraPosition;
-            
-            // Apply parallax movement (slower than camera)
-            Vector3 parallaxMovement = new Vector3(
-                deltaMovement.x * parallaxSpeed,
-                deltaMovement.y * parallaxSpeed,
-                0f
-            );
-            
-            // Update background parent position (moves all tiles together)
+            Vector3 parallaxMovement = new Vector3(deltaMovement.x * parallaxSpeed, deltaMovement.y * parallaxSpeed, 0f);
+
             backgroundParent.transform.position += parallaxMovement;
-            
-            // Update last camera position
             lastCameraPosition = currentCameraPosition;
         }
 
-        /// <summary>
-        /// Called when a new scene is loaded
-        /// </summary>
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            // Only create background for stage scenes
-            if (IsStageScene(scene.name))
+            // 스테이지 씬이 아니라면 배경을 제거 (예: 메인 메뉴)
+            if (!scene.name.Contains("Stage"))
             {
-                CreateBackground();
-            }
-            else
-            {
-                // Destroy background if not in a stage scene
                 DestroyBackground();
             }
         }
 
-        /// <summary>
-        /// Check if the scene is a stage scene
-        /// </summary>
-        private bool IsStageScene(string sceneName)
-        {
-            return sceneName == "Stage1" || 
-                   sceneName == "Stage2" || 
-                   sceneName == "Stage3" || 
-                   sceneName == "Stage4";
-        }
-
-        /// <summary>
-        /// Create background GameObject with sprite
-        /// </summary>
         private void CreateBackground()
         {
-            // Destroy existing background if any
             DestroyBackground();
 
-            // Load background sprite from Resources
-            Sprite backgroundSprite = Resources.Load<Sprite>(backgroundImageName);
-            
-            if (backgroundSprite == null)
+            if (MaskManager.Instance == null) return;
+
+            // 현재 마스크에 맞는 스프라이트 선택
+            MaskType currentType = MaskManager.Instance.CurrentMask;
+            currentCachedMaskType = currentType; // 캐시 갱신
+
+            Sprite targetSprite = (currentType == MaskType.White) ? currentWhiteSprite : currentBlackSprite;
+
+            if (targetSprite == null)
             {
-                Debug.LogWarning($"[StageBackgroundManager] 배경 이미지를 찾을 수 없습니다: Resources/{backgroundImageName}");
-                Debug.LogWarning("[StageBackgroundManager] 배경 이미지를 Resources 폴더에 추가해주세요.");
+                Debug.LogWarning("[StageBackgroundManager] 설정된 스프라이트가 없습니다. (StageSettings 확인 필요)");
                 return;
             }
 
-            // Create parent container for all background tiles
+            // 부모 생성 및 정렬
             backgroundParent = new GameObject("StageBackgroundParent");
-            Vector3 cameraPosition = mainCamera != null ? mainCamera.transform.position : Vector3.zero;
-            backgroundParent.transform.position = new Vector3(cameraPosition.x, cameraPosition.y, backgroundZPosition);
+            AlignBackgroundToCamera();
 
-            // Initialize last camera position for parallax
-            lastCameraPosition = cameraPosition;
-
-            // Calculate base scale
-            Vector3 baseScale = autoScale ? CalculateBackgroundScale(backgroundSprite) : manualScale;
-            
-            // Apply parallax size multiplier
-            if (enableParallax)
-            {
-                baseScale *= parallaxSizeMultiplier;
-            }
-
-            // Apply vertical scale multiplier (make it taller)
+            // 스케일 계산
+            Vector3 baseScale = autoScale ? CalculateBackgroundScale(targetSprite) : manualScale;
+            if (enableParallax) baseScale *= parallaxSizeMultiplier;
             baseScale.y *= verticalScaleMultiplier;
 
-            // Get sprite width in world units for tiling
-            float spriteWorldWidth = backgroundSprite.bounds.size.x * baseScale.x;
+            float spriteWorldWidth = targetSprite.bounds.size.x * baseScale.x;
 
-            // Create center background
-            backgroundObject = CreateBackgroundTile(backgroundSprite, Vector3.zero, baseScale, "Center");
+            // 타일 생성
+            backgroundObject = CreateBackgroundTile(targetSprite, Vector3.zero, baseScale, "Center");
             backgroundObject.transform.SetParent(backgroundParent.transform, false);
 
-            // Create horizontal tiles if enabled
             if (enableHorizontalTiling)
             {
                 for (int i = 1; i <= horizontalTileCount; i++)
                 {
-                    // Left tile
-                    Vector3 leftPosition = new Vector3(-spriteWorldWidth * i, 0f, 0f);
-                    GameObject leftTile = CreateBackgroundTile(backgroundSprite, leftPosition, baseScale, $"Left_{i}");
-                    leftTile.transform.SetParent(backgroundParent.transform, false);
+                    CreateBackgroundTile(targetSprite, new Vector3(-spriteWorldWidth * i, 0f, 0f), baseScale, $"Left_{i}")
+                        .transform.SetParent(backgroundParent.transform, false);
 
-                    // Right tile
-                    Vector3 rightPosition = new Vector3(spriteWorldWidth * i, 0f, 0f);
-                    GameObject rightTile = CreateBackgroundTile(backgroundSprite, rightPosition, baseScale, $"Right_{i}");
-                    rightTile.transform.SetParent(backgroundParent.transform, false);
+                    CreateBackgroundTile(targetSprite, new Vector3(spriteWorldWidth * i, 0f, 0f), baseScale, $"Right_{i}")
+                        .transform.SetParent(backgroundParent.transform, false);
                 }
             }
-
-            Debug.Log($"[StageBackgroundManager] 배경 생성 완료: {SceneManager.GetActiveScene().name}");
         }
 
-        /// <summary>
-        /// Create a single background tile
-        /// </summary>
+        private void AlignBackgroundToCamera()
+        {
+            if (mainCamera == null) mainCamera = Camera.main;
+            if (mainCamera == null || backgroundParent == null) return;
+
+            Vector3 camPos = mainCamera.transform.position;
+            backgroundParent.transform.position = new Vector3(camPos.x, camPos.y, backgroundZPosition);
+            lastCameraPosition = camPos;
+        }
+
         private GameObject CreateBackgroundTile(Sprite sprite, Vector3 localPosition, Vector3 scale, string name)
         {
             GameObject tile = new GameObject($"StageBackground_{name}");
-            
-            // Add SpriteRenderer component
-            SpriteRenderer spriteRenderer = tile.AddComponent<SpriteRenderer>();
-            spriteRenderer.sprite = sprite;
-            spriteRenderer.sortingLayerName = sortingLayerName;
-            spriteRenderer.sortingOrder = sortingOrder;
-
-            // Set local position and scale
+            SpriteRenderer sr = tile.AddComponent<SpriteRenderer>();
+            sr.sprite = sprite;
+            sr.sortingLayerName = sortingLayerName;
+            sr.sortingOrder = sortingOrder;
             tile.transform.localPosition = localPosition;
             tile.transform.localScale = scale;
-
             return tile;
         }
 
-        /// <summary>
-        /// Calculate background scale to fit camera view
-        /// </summary>
         private Vector3 CalculateBackgroundScale(Sprite sprite)
         {
-            if (mainCamera == null || sprite == null)
-            {
-                return Vector3.one * 20f; // Default scale
-            }
-
-            // Get camera dimensions
-            float cameraHeight = mainCamera.orthographicSize * 2f;
-            float cameraWidth = cameraHeight * mainCamera.aspect;
-
-            // Get sprite dimensions (in world units)
-            float spriteWidth = sprite.bounds.size.x;
-            float spriteHeight = sprite.bounds.size.y;
-
-            // Calculate scale to cover the entire camera view
-            float scaleX = cameraWidth / spriteWidth;
-            float scaleY = cameraHeight / spriteHeight;
-
-            // Use the larger scale to ensure full coverage
-            float scale = Mathf.Max(scaleX, scaleY);
-
+            if (mainCamera == null) return Vector3.one * 20f;
+            float camHeight = mainCamera.orthographicSize * 2f;
+            float camWidth = camHeight * mainCamera.aspect;
+            float scale = Mathf.Max(camWidth / sprite.bounds.size.x, camHeight / sprite.bounds.size.y);
             return new Vector3(scale, scale, 1f);
         }
 
-        /// <summary>
-        /// Destroy existing background GameObject
-        /// </summary>
         private void DestroyBackground()
         {
-            if (backgroundParent != null)
-            {
-                Destroy(backgroundParent);
-                backgroundParent = null;
-            }
-            
-            if (backgroundObject != null)
-            {
-                backgroundObject = null;
-            }
-        }
-
-        /// <summary>
-        /// Manually refresh background (useful for testing)
-        /// </summary>
-        public void RefreshBackground()
-        {
-            if (IsStageScene(SceneManager.GetActiveScene().name))
-            {
-                CreateBackground();
-            }
+            if (backgroundParent != null) Destroy(backgroundParent);
+            if (backgroundObject != null) Destroy(backgroundObject);
         }
     }
 }

@@ -18004,6 +18004,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2041593353}
   - component: {fileID: 2041593352}
+  - component: {fileID: 2041593354}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -18023,7 +18024,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09654d166f5a6944188978c292ab3207, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThawTheMask.StageBackgroundManager
-  backgroundImageName: bgW
   sortingLayerName: Background
   sortingOrder: -100
   backgroundZPosition: 10
@@ -18050,6 +18050,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2041593354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2041593351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b19d8d4e1ac87ef498af56c672aa922b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThawTheMask.StageSettings
+  WhiteModeBackground: {fileID: 7773806529968624320, guid: 11f552449d871fa4eacc06eaa38aaf51,
+    type: 3}
+  BlackModeBackground: {fileID: 5167681553326398648, guid: e453e195504686b47b7d74d3db496fc7,
+    type: 3}
 --- !u!1 &2089030667
 GameObject:
   m_ObjectHideFlags: 0
